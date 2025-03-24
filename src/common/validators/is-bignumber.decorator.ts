@@ -16,7 +16,7 @@ export function IsBigNumber(
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any) {
+        validate(value: any): boolean {
           try {
             const bn = new BigNumber(value);
             // Verify it's a finite number, not NaN, and has at most maxDecimalPlaces.
@@ -25,7 +25,7 @@ export function IsBigNumber(
             return false;
           }
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage(args: ValidationArguments): string {
           return `${args.property} must be a valid numeric string convertible to BigNumber with no more than ${maxDecimalPlaces} decimal places`;
         },
       },

@@ -23,7 +23,7 @@ export class TransactionService {
   }
 
   getAllTransactions(): Transaction[] {
-    return this.transactions;
+    return [...this.transactions];
   }
 
   getTransactionsByAccount(accountId: string): Transaction[] {

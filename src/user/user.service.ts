@@ -10,14 +10,14 @@ export class UserService {
   createUser(name: string, email: string): User {
     // Check for duplicate email
     const duplicateUserEmail = Array.from(this.users.values()).find(
-      (user) => user.email === email,
+      (user) => user.email.toLowerCase() === email.toLowerCase(),
     );
     if (duplicateUserEmail) {
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
 
     const userId = uuidv4();
-    const user = new User(userId, name, email);
+    const user = new User(userId, name, email.toLowerCase());
     this.users.set(userId, user);
     this.logger.log(`User created: ${userId}`);
     return user;
