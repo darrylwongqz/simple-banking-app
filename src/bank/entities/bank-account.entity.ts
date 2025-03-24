@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 export enum TransactionType {
   INITIAL_DEPOSIT = 'INITIAL_DEPOSIT',
   DEPOSIT = 'DEPOSIT',
@@ -10,39 +12,39 @@ export class BankAccount {
   accountId: string;
   ownerUserId: string;
   name: string;
-  balance: number;
+  balance: BigNumber;
   createdAt: Date;
 
   constructor(
     accountId: string,
     ownerUserId: string,
     name: string,
-    startingBalance: number,
+    startingBalance: number | string,
   ) {
-    if (startingBalance < 0) {
+    if (new BigNumber(startingBalance).lt(0)) {
       throw new Error('Starting balance cannot be negative');
     }
     this.accountId = accountId;
     this.ownerUserId = ownerUserId;
     this.name = name;
-    this.balance = startingBalance;
+    this.balance = new BigNumber(startingBalance);
     this.createdAt = new Date();
   }
 
-  deposit(amount: number): void {
-    if (amount <= 0) {
+  deposit(amount: BigNumber): void {
+    if (amount.lte(0)) {
       throw new Error('Deposit amount must be positive');
     }
-    this.balance += amount;
+    this.balance = this.balance.plus(amount);
   }
 
-  withdraw(amount: number): void {
-    if (amount <= 0) {
+  withdraw(amount: BigNumber): void {
+    if (amount.lte(0)) {
       throw new Error('Withdrawal amount must be positive');
     }
-    if (amount > this.balance) {
+    if (this.balance.lt(amount)) {
       throw new Error('Insufficient funds for withdrawal');
     }
-    this.balance -= amount;
+    this.balance = this.balance.minus(amount);
   }
 }
