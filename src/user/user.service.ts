@@ -8,6 +8,14 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   createUser(name: string, email: string): User {
+    // Check for duplicate email
+    const duplicateUserEmail = Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+    if (duplicateUserEmail) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+
     const userId = uuidv4();
     const user = new User(userId, name, email);
     this.users.set(userId, user);
