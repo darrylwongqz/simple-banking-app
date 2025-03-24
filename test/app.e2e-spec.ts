@@ -1,24 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { setupTestApp } from './test-utils';
 
-describe('AppController (e2e)', () => {
+describe('API Routes (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    app = await setupTestApp();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('API Endpoints Availability', () => {
+    it('GET /users - Should be available', async () => {
+      await request(app.getHttpServer()).get('/users').expect(200);
+    });
+
+    it('GET /transactions - Should be available', async () => {
+      await request(app.getHttpServer()).get('/transactions').expect(200);
+    });
+
+    it('GET /accounts - Should return 404 since it requires a specific account ID', async () => {
+      await request(app.getHttpServer()).get('/accounts').expect(404);
+    });
   });
 });

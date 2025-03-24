@@ -100,13 +100,6 @@ describe('UserController', () => {
         'existing@example.com',
       );
     });
-
-    // This test would be covered by using ValidationPipe in an e2e test
-    it('should validate user input (via ValidationPipe in a real request)', () => {
-      // In a real test, ValidationPipe would validate these inputs
-      // This is a placeholder test to document the validation behavior
-      // Direct validation requires e2e tests with the full HTTP context
-    });
   });
 
   describe('getAllUsers', () => {

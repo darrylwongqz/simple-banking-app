@@ -137,6 +137,15 @@ export class BankService {
     toAccount: BankAccount;
   } {
     const { userId, fromAccountId, toAccountId, amount } = transferDto;
+
+    // Prevent transfers to the same account
+    if (fromAccountId === toAccountId) {
+      throw new HttpException(
+        'Cannot transfer to the same account',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const amountBN = new BigNumber(amount);
     if (amountBN.lte(0)) {
       throw new HttpException(

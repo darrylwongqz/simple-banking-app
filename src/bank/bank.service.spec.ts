@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TransactionType } from './entities/bank-account.entity';
 import { TransactionService } from '../transaction/transaction.service';
 import { UserService } from '../user/user.service';
+import { BankAccount } from './entities/bank-account.entity';
 
 describe('BankService', () => {
   let service: BankService;
@@ -566,6 +567,45 @@ describe('BankService', () => {
       expect(() => service.transfer(transferDto)).toThrow(
         'Unauthorized access to transfer from this account',
       );
+    });
+
+    it('should throw an error when attempting to transfer to the same account', async () => {
+      // Given a user and account
+      const userId = 'user123';
+      mockUserService.getUser.mockReturnValue({
+        userId,
+        name: 'Test User',
+        email: 'test@example.com',
+        createdAt: new Date(),
+      });
+
+      const accountId = 'account123';
+      const account = new BankAccount(
+        accountId,
+        userId,
+        'Test Account',
+        '1000.00',
+      );
+      service['accounts'].set(accountId, account);
+
+      // When attempting to transfer to the same account
+      const transferDto: TransferDto = {
+        userId,
+        fromAccountId: accountId,
+        toAccountId: accountId, // Same account
+        amount: '100.00',
+      };
+
+      // Then an error should be thrown
+      expect(() => service.transfer(transferDto)).toThrow(
+        new HttpException(
+          'Cannot transfer to the same account',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+
+      // And no transactions should be created
+      expect(mockTransactionService.addTransaction).not.toHaveBeenCalled();
     });
   });
 

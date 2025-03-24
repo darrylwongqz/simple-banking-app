@@ -1,99 +1,275 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Simple Banking App
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API built with [NestJS](https://nestjs.com/) that simulates basic banking operations. The app allows you to manage users, create bank accounts, and perform transactions (deposits, withdrawals, transfers). Every operation is logged, and you can audit all transactions through a dedicated endpoint.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 1. Introduction
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The Simple Banking App is designed to demonstrate a clean, modular REST API built with NestJS. It includes:
 
-## Project setup
+- **User Management:** Create and retrieve users.
+- **Account Management:** Create bank accounts for users. The same user cannot create multiple accounts with the same name.
+- **Transactions:** Perform deposits, withdrawals, and transfers between accounts. All operations are logged as transactions.
+- **Audit:** Retrieve all transactions for auditing purposes.
+- **Precision Handling:** Monetary amounts are managed using BigNumber and accepted as strings to preserve decimal precision.
+- **Swagger Documentation:** Interactive API docs generated via Swagger.
 
-```bash
-$ npm install
+---
+
+## 2. Running in Production Mode
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Build the application:**
+   ```bash
+   npm run build
+   ```
+3. **Start in production mode:**
+   ```bash
+   npm run start:prod
+   ```
+The app will run on [http://localhost:3000](http://localhost:3000) by default.
+
+You can access the swagger interface to access the api at [http://localhost:3000/api](http://localhost:3000/api)
+
+---
+
+## 3. Running in Development Mode
+
+For development with hot-reloading:
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Start in development mode:**
+   ```bash
+   npm run start:dev
+   ```
+The app will run on [http://localhost:3000](http://localhost:3000) and auto-reload on code changes.
+
+You can access the swagger interface to access the api at [http://localhost:3000/api](http://localhost:3000/api)
+
+---
+
+## 4. Running Automated Tests
+
+### Unit and Integration Tests - 99.51% coverage
+
+- **Run unit tests:**
+  ```bash
+  npm run test
+  ```
+- **Run test coverage:**
+  ```bash
+  npm run test:cov
+  ```
+
+### End-to-End (e2e) Tests
+
+- **Run e2e tests:**
+  ```bash
+  npm run test:e2e
+  ```
+
+---
+
+## 5. Manual Testing with Swagger
+
+1. **Start the application** (in development or production mode).
+2. **Open Swagger UI** by navigating to [http://localhost:3000/api](http://localhost:3000/api).
+
+### Testing Steps via Swagger
+
+1. **Create Users:**
+   - Use the `POST /users` endpoint to create two users:
+     - **User 1:**
+       ```json
+       {
+         "name": "John Doe",
+         "email": "john@example.com"
+       }
+       ```
+     - **User 2:**
+       ```json
+       {
+         "name": "Jane Smith",
+         "email": "jane@example.com"
+       }
+       ```
+   - Note the returned `userId` for each user.
+
+2. **Create Bank Accounts:**
+   - Use the `POST /accounts` endpoint to create accounts:
+     - **Account for User 1:**
+       ```json
+       {
+         "name": "John's Savings",
+         "ownerUserId": "user1-id-from-step-1",
+         "startingBalance": "1000.00"
+       }
+       ```
+     - **Account for User 2:**
+       ```json
+       {
+         "name": "Jane's Checking",
+         "ownerUserId": "user2-id-from-step-1",
+         "startingBalance": "500.00"
+       }
+       ```
+   - Note the `accountId` from each response.
+
+3. **Perform Transactions:**
+   - **Deposit:**  
+     Use `POST /accounts/{accountId}/deposit` with:
+     ```json
+     {
+       "userId": "user1-id-from-step-1",
+       "amount": "250.00"
+     }
+     ```
+   - **Withdrawal:**  
+     Use `POST /accounts/{accountId}/withdraw` with:
+     ```json
+     {
+       "userId": "user1-id-from-step-1",
+       "amount": "100.00"
+     }
+     ```
+   - **Transfer:**  
+     Use `POST /accounts/transfer` with:
+     ```json
+     {
+       "userId": "user1-id-from-step-1",
+       "fromAccountId": "account1-id-from-step-2",
+       "toAccountId": "account2-id-from-step-2",
+       "amount": "200.00"
+     }
+     ```
+
+4. **Test Error Handling:**
+   - **Insufficient Funds:**  
+     Test the application's handling of withdrawal or transfer attempts that exceed available funds:
+     ```json
+     {
+       "userId": "user1-id-from-step-1",
+       "amount": "5000.00"  // Amount greater than account balance
+     }
+     ```
+     The API should return a 400 Bad Request with a message about insufficient funds.
+   
+   - **Same Account Transfer:**  
+     Attempt to transfer money to the same account:
+     ```json
+     {
+       "userId": "user1-id-from-step-1",
+       "fromAccountId": "account1-id",
+       "toAccountId": "account1-id",  // Same as fromAccountId
+       "amount": "100.00"
+     }
+     ```
+     The API should return a 400 Bad Request indicating that transfers to the same account are not allowed.
+
+   - **View Transaction History:**  
+     Get transaction history for an account:
+     ```
+     GET /accounts/{accountId}/transactions?userId={userId}
+     ```
+     This will return all transactions for the specified account.
+
+   - **View All Transactions (Audit):**  
+     For audit purposes, use:
+     ```
+     GET /transactions
+     ```
+     This endpoint provides a complete transaction log for the entire system.
+
+## Authentication Note
+
+This is a demonstration application that uses `userId` in the request body for simplicity. In a production environment:
+
+- User authentication would utilize JWT (JSON Web Tokens) or similar authentication mechanisms
+- User identification and authorization would be handled through request headers, not request body
+- Sensitive operations would require proper authentication tokens rather than passing user IDs directly
+- Additional security measures like rate limiting, request validation, and audit logging would be implemented
+
+The current implementation focuses on demonstrating the banking business logic rather than security practices.
+
+---
+
+## 6. Project Structure
+
+```
+simple-banking-app/
+├── src/                           # Source code
+│   ├── app.module.ts              # Main application module
+│   ├── main.ts                    # Application entry point
+│   │
+│   ├── bank/                      # Bank module (accounts & transactions)
+│   │   ├── bank.controller.ts     # Controller for account operations
+│   │   ├── bank.module.ts         # Bank module definition
+│   │   ├── bank.service.ts        # Service for account operations
+│   │   ├── dto/                   # Data Transfer Objects
+│   │   └── entities/              # Account entity definitions
+│   │
+│   ├── user/                      # User module
+│   │   ├── user.controller.ts     # Controller for user operations
+│   │   ├── user.module.ts         # User module definition
+│   │   ├── user.service.ts        # Service for user operations
+│   │   ├── dto/                   # Data Transfer Objects
+│   │   └── entities/              # User entity definitions
+│   │
+│   ├── transaction/               # Transaction module
+│   │   ├── transaction.controller.ts  # Controller for transaction queries
+│   │   ├── transaction.module.ts      # Transaction module definition
+│   │   ├── transaction.service.ts     # Service for transaction operations
+│   │   └── entities/                  # Transaction entity definitions
+│   │
+│   └── common/                    # Shared code
+│       ├── validators/            # Custom validators
+│       └── interfaces/            # Shared interfaces
+│
+├── test/                          # End-to-end tests
+│   ├── app.e2e-spec.ts            # Application e2e tests
+│   ├── user.e2e-spec.ts           # User module e2e tests
+│   ├── bank.e2e-spec.ts           # Bank module e2e tests
+│   └── transaction.e2e-spec.ts    # Transaction module e2e tests
+│
+├── package.json                   # Project dependencies
+├── tsconfig.json                  # TypeScript configuration
+└── README.md                      # Project documentation
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 7. Entity Relationship Diagram (ERD)
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+┌─────────────┐       ┌──────────────┐       ┌────────────────┐
+│    User     │       │  BankAccount  │       │  Transaction   │
+├─────────────┤       ├──────────────┤       ├────────────────┤
+│ userId (PK) │───┐   │ accountId(PK)│───┐   │transactionId(PK)│
+│ name        │   │   │ name         │   │   │amount           │
+│ email       │   │   │ balance      │   │   │transactionType  │
+└─────────────┘   │   │ ownerUserId  │◄──┘   │timestamp        │
+                  │   │ (FK to User) │       │accountId        │
+                  │   └──────────────┘       │(FK to Account)  │
+                  │                          │description      │
+                  └─────────────────────────►│relatedAccountId │
+                                             │                 │
+                                             └────────────────┘
 ```
 
-## Run tests
+Legend:
+- User: Represents a bank customer
+- BankAccount: Represents a bank account owned by a user
+- Transaction: Represents financial transactions on accounts
+  - Types include: INITIAL_DEPOSIT, DEPOSIT, WITHDRAWAL, TRANSFER_IN, TRANSFER_OUT
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Relationships:
+- One User can have many BankAccounts (1:N)
+- One BankAccount can have many Transactions (1:N)
+- Transactions can reference other accounts (for transfers)
