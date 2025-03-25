@@ -17,7 +17,7 @@ The Simple Banking App is designed to demonstrate a clean, modular REST API buil
 
 ---
 
-## 2. Running in Production Mode
+## 2. Running in Production Mode (if you have Node.js installed)
 
 1. **Install dependencies:**
    ```bash
@@ -34,6 +34,64 @@ The Simple Banking App is designed to demonstrate a clean, modular REST API buil
 The app will run on [http://localhost:3000](http://localhost:3000) by default.
 
 You can access the swagger interface to access the api at [http://localhost:3000/api](http://localhost:3000/api)
+
+## 2.1 Running with Docker
+
+You can run the application using Docker without installing Node.js locally:
+
+### Option 1: Using the run.sh Script (Easiest)
+
+1. Make sure you have [Docker](https://www.docker.com/get-started) installed on your system.
+
+2. Clone the repository and navigate to the project directory:
+   ```bash
+   git clone <repository-url>
+   cd simple-banking-app
+   ```
+
+3. Make the run script executable and run it:
+   ```bash
+   chmod +x run.sh
+   ./run.sh
+   ```
+
+4. The script will automatically detect if you have Docker Compose installed and use the appropriate method.
+
+5. Access the Swagger UI at http://localhost:3000/api in your browser.
+
+6. To stop the application, press Ctrl+C in the terminal.
+
+### Option 2: Using Docker Compose
+
+1. Make sure you have [Docker](https://www.docker.com/get-started) and Docker Compose installed on your system.
+
+2. Clone the repository and navigate to the project directory.
+
+3. Run the application with Docker Compose:
+   ```bash
+   docker compose up
+   ```
+
+4. Access the Swagger UI at http://localhost:3000/api in your browser.
+
+5. To stop the application, press Ctrl+C in the terminal or run:
+   ```bash
+   docker compose down
+   ```
+
+### Option 3: Using Docker Directly
+
+1. Build the Docker image:
+   ```bash
+   docker build -t simple-banking-app .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 simple-banking-app
+   ```
+
+3. Access the Swagger UI at http://localhost:3000/api in your browser.
 
 ---
 
@@ -291,3 +349,5 @@ Relationships:
 - One User can have many BankAccounts (1:N)
 - One BankAccount can have many Transactions (1:N)
 - Transactions can reference other accounts (for transfers)
+
+---
