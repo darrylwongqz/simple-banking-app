@@ -198,6 +198,24 @@ This is a demonstration application that uses `userId` in the request body for s
 
 The current implementation focuses on demonstrating the banking business logic rather than security practices.
 
+## Domain-Driven Design Approach
+
+The application follows some principles of Domain-Driven Design (DDD), particularly with the `BankAccount` entity:
+
+- **Rich Domain Model**: The `BankAccount` entity contains business methods like `deposit()` and `withdraw()` rather than being a simple data container. This is in contrast to the `User` and `Transaction` entities which are more data-centric.
+
+- **Encapsulation of Business Rules**: The `BankAccount` entity encapsulates critical business rules such as:
+  - Preventing negative balances during withdrawals
+  - Validating transaction amounts
+  - Managing the account balance
+
+- **Logic in Entity vs. Service Layer**: While many applications put all business logic in service layers, this design deliberately places account-specific operations in the entity itself because:
+  1. These operations directly affect the entity's state (balance)
+  2. Business rules about balance management are intrinsic to what an account *is*, not just what it *does*
+  3. This creates a more maintainable codebase where account-specific logic isn't spread across multiple services
+
+This pattern ensures that the core domain logic can't be bypassed and that account balance modifications always follow the required business rules, regardless of which service is using the entity.
+
 ---
 
 ## 6. Project Structure
