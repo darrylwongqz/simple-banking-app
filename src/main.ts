@@ -16,6 +16,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  app.getHttpAdapter().get('/', (req, res) => {
+    res.redirect('/api');
+  });
+
   await app.listen(process.env.PORT ?? 3000);
   Logger.log(
     `Application running on http://localhost:${process.env.PORT ?? 3000}`,
