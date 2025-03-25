@@ -167,6 +167,37 @@ describe('BankService', () => {
       expect(mockTransactionService.addTransaction).not.toHaveBeenCalled();
     });
 
+    it('should create an account with zero starting balance and allow subsequent deposits', () => {
+      const createAccountDto: CreateAccountDto = {
+        ownerUserId: validUserId,
+        name: 'Zero Balance With Deposit',
+        startingBalance: '0',
+      };
+
+      const account = service.createAccount(createAccountDto);
+      expect(account.balance.toString()).toBe('0');
+      expect(mockTransactionService.addTransaction).not.toHaveBeenCalled();
+
+      // Clear mocks to start fresh for deposit test
+      jest.clearAllMocks();
+
+      // Test depositing into the zero balance account
+      const depositDto: DepositDto = {
+        userId: validUserId,
+        amount: '100.00',
+      };
+
+      const updatedAccount = service.deposit(account.accountId, depositDto);
+      expect(updatedAccount.balance.toString()).toBe('100');
+      expect(mockTransactionService.addTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accountId: account.accountId,
+          transactionType: TransactionType.DEPOSIT,
+          amount: '100.00',
+        }),
+      );
+    });
+
     it('should handle different decimal places in starting balance', () => {
       // Test with whole number
       const account1 = service.createAccount({
@@ -191,6 +222,46 @@ describe('BankService', () => {
         startingBalance: '300.75',
       });
       expect(account3.balance.toString()).toBe('300.75');
+    });
+
+    it('should throw an error when starting balance is negative', () => {
+      const createAccountDto: CreateAccountDto = {
+        ownerUserId: validUserId,
+        name: 'Negative Balance',
+        startingBalance: '-100.00',
+      };
+
+      expect(() => service.createAccount(createAccountDto)).toThrow(
+        HttpException,
+      );
+      expect(() => service.createAccount(createAccountDto)).toThrow(
+        'Starting balance cannot be negative',
+      );
+      try {
+        service.createAccount(createAccountDto);
+      } catch (e) {
+        expect(e.status).toBe(HttpStatus.BAD_REQUEST);
+      }
+    });
+
+    it('should throw an error when starting balance is a negative decimal', () => {
+      const createAccountDto: CreateAccountDto = {
+        ownerUserId: validUserId,
+        name: 'Negative Decimal',
+        startingBalance: '-0.01',
+      };
+
+      expect(() => service.createAccount(createAccountDto)).toThrow(
+        HttpException,
+      );
+      expect(() => service.createAccount(createAccountDto)).toThrow(
+        'Starting balance cannot be negative',
+      );
+      try {
+        service.createAccount(createAccountDto);
+      } catch (e) {
+        expect(e.status).toBe(HttpStatus.BAD_REQUEST);
+      }
     });
   });
 

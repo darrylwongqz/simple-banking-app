@@ -37,6 +37,15 @@ export class BankService {
       );
     }
 
+    // Validate starting balance
+    const startingBalanceBN = new BigNumber(startingBalance);
+    if (startingBalanceBN.lt(0)) {
+      throw new HttpException(
+        'Starting balance cannot be negative',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const accountId = uuidv4();
     const account = new BankAccount(
       accountId,
@@ -48,15 +57,19 @@ export class BankService {
     this.accounts.set(accountId, account);
     this.logger.log(`Account created: ${accountId} for user ${ownerUserId}`);
 
-    // Add initial deposit transaction if starting balance is positive
-    if (new BigNumber(startingBalance).gt(0)) {
+    // Only create initial deposit transaction if starting balance is greater than 0
+    if (startingBalanceBN.gt(0)) {
       this.transactionService.addTransaction({
         transactionId: uuidv4(),
         accountId,
         transactionType: TransactionType.INITIAL_DEPOSIT,
-        amount: new BigNumber(startingBalance).toFixed(2),
+        amount: startingBalanceBN.toFixed(2),
         timestamp: new Date(),
       });
+    } else {
+      this.logger.log(
+        `Account created with zero starting balance: ${accountId}`,
+      );
     }
 
     return account;
