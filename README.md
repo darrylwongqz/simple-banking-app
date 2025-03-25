@@ -2,6 +2,8 @@
 
 A RESTful API built with [NestJS](https://nestjs.com/) that simulates basic banking operations. The app allows you to manage users, create bank accounts, and perform transactions (deposits, withdrawals, transfers). Every operation is logged, and you can audit all transactions through a dedicated endpoint.
 
+**Full Video Demo** at [here](https://drive.google.com/file/d/1g8Gn7GrvqMpQ5MAcuoP8gbtim_mDwL7d/view?usp=sharing)
+
 ---
 
 ## 1. Introduction
